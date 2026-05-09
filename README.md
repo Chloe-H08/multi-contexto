@@ -1,1 +1,28 @@
-# multi-contexto
+# Multi Contexto
+
+An unlimited, local-first Contexto-style word game where every guess applies to two hidden words at the same time.
+
+Contexto ranks guesses by semantic closeness instead of spelling. This version uses one noun bank: every valid guess is a noun in that bank, every answer comes from that same bank, and every rank is fixed against the full bank.
+
+## Run
+
+Open [index.html](index.html) directly in a browser.
+
+## How Ranking Works
+
+- `data/embeddings.js` contains the valid noun list and its precomputed embeddings.
+- At the start of a round, the browser picks two target words.
+- For each target, the browser ranks every noun by cosine similarity to the target.
+- A guess is accepted only if it exists in the noun bank.
+- The closest word is rank `#1`; lower ranks are closer.
+- The rank is the guessed noun's fixed position in the ranked noun bank.
+
+## Current Features
+
+- Two simultaneous Contexto boards
+- Shared guesses with independent ranks for Game A and Game B
+- Unlimited rounds
+- Hints that reveal a closer unguessed word
+- Give-up controls per board
+- Precomputed noun embeddings in `data/embeddings.js`
+- Responsive layout with an animated semantic-field canvas

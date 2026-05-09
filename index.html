@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Multi Contexto</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <canvas id="field" aria-hidden="true"></canvas>
+
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Unlimited semantic double puzzle</p>
+          <h1>Multi Contexto</h1>
+        </div>
+        <button id="newRound" class="icon-button" type="button" aria-label="Start a new round" title="New round">
+          ↻
+        </button>
+      </header>
+
+      <section class="guess-zone" aria-label="Guess input">
+        <form id="guessForm" class="guess-form">
+          <input
+            id="guessInput"
+            name="guess"
+            type="text"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="Type one word..."
+            aria-label="Guess a word"
+          >
+          <button type="submit">Guess</button>
+        </form>
+        <p id="message" class="message" role="status"></p>
+      </section>
+
+      <section class="boards" aria-label="Active games">
+        <article class="board" data-board="0">
+          <div class="board-head">
+            <div>
+              <p class="board-label">Game A</p>
+              <h2 id="titleA">Finding word</h2>
+            </div>
+            <div id="bestA" class="best-rank">∞</div>
+          </div>
+          <div id="progressA" class="progress-track">
+            <span></span>
+          </div>
+          <div class="board-actions">
+            <button id="hintA" type="button">Hint</button>
+            <button id="giveA" type="button">Give up</button>
+          </div>
+          <p id="answerA" class="answer"></p>
+        </article>
+
+        <article class="board" data-board="1">
+          <div class="board-head">
+            <div>
+              <p class="board-label">Game B</p>
+              <h2 id="titleB">Finding word</h2>
+            </div>
+            <div id="bestB" class="best-rank">∞</div>
+          </div>
+          <div id="progressB" class="progress-track">
+            <span></span>
+          </div>
+          <div class="board-actions">
+            <button id="hintB" type="button">Hint</button>
+            <button id="giveB" type="button">Give up</button>
+          </div>
+          <p id="answerB" class="answer"></p>
+        </article>
+      </section>
+
+      <section class="history-wrap" aria-label="Guess history">
+        <div class="history-head">
+          <div>
+            <p class="eyebrow">Shared guesses</p>
+            <h2>Both ranks update together</h2>
+          </div>
+          <div id="guessCount" class="counter">0 guesses</div>
+        </div>
+        <div class="history-table">
+          <div class="history-row header" role="row">
+            <span>Guess</span>
+            <span>Game A</span>
+            <span>Game B</span>
+          </div>
+          <div id="history"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="data/embeddings.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
