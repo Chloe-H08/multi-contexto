@@ -39,8 +39,9 @@ const state = {
 const nodes = {
   form: document.querySelector("#guessForm"),
   input: document.querySelector("#guessInput"),
+  guessTicker: document.querySelector("#guessTicker"),
   message: document.querySelector("#message"),
-  history: document.querySelector("#history"),
+  history: [document.querySelector("#historyA"), document.querySelector("#historyB")],
   count: document.querySelector("#guessCount"),
   newRound: document.querySelector("#newRound"),
   boards: [...document.querySelectorAll(".board")],
@@ -54,16 +55,82 @@ const nodes = {
 
 async function loadEmbeddingBank() {
   try {
-    const payload = window.MULTI_CONTEXTO_EMBEDDINGS;
-    if (!payload) throw new Error("Embedding data is missing.");
-    const entries = Object.entries(payload.embeddings || payload).map(([word, vector]) => [word, vector]);
+    const entries = await loadPackedEntries();
     if (entries.length < 2) throw new Error("Embedding file has too few words.");
     setBank(entries, false);
     nodes.message.textContent = statusMessage();
   } catch (error) {
-    setBank(DEMO_BANK, true);
-    nodes.message.textContent = statusMessage();
+    try {
+      if (!window.MULTI_CONTEXTO_EMBEDDINGS) {
+        await loadScript("data/embeddings.js");
+      }
+      const payload = window.MULTI_CONTEXTO_EMBEDDINGS;
+      if (!payload) throw new Error("Legacy embedding data is missing.");
+      const entries = Object.entries(payload.embeddings || payload).map(([word, vector]) => [word, vector]);
+      if (entries.length < 2) throw new Error("Legacy embedding file has too few words.");
+      setBank(entries, false);
+      nodes.message.textContent = statusMessage();
+    } catch {
+      setBank(DEMO_BANK, true);
+      nodes.message.textContent = statusMessage();
+    }
   }
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(script);
+  });
+}
+
+function decodeChunk(base64) {
+  const binary = atob(base64);
+  const bytes = new Int8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    const value = binary.charCodeAt(i);
+    bytes[i] = value > 127 ? value - 256 : value;
+  }
+  return bytes;
+}
+
+async function loadPackedEntries() {
+  const manifest = window.MULTI_CONTEXTO_EMBEDDINGS_MANIFEST;
+  if (!manifest) throw new Error("Packed embedding manifest is missing.");
+
+  window.MULTI_CONTEXTO_EMBEDDING_CHUNKS = window.MULTI_CONTEXTO_EMBEDDING_CHUNKS || [];
+  const chunks = window.MULTI_CONTEXTO_EMBEDDING_CHUNKS;
+  for (let index = 0; index < manifest.chunks; index += 1) {
+    if (chunks[index]) continue;
+    const part = String(index + 1).padStart(2, "0");
+    await loadScript(`data/embeddings/chunk-${part}.js`);
+  }
+
+  const words = manifest.words;
+  const dimensions = manifest.dimensions;
+  const scale = manifest.scale;
+  const allBytes = new Int8Array(words.length * dimensions);
+  let cursor = 0;
+
+  for (let index = 0; index < manifest.chunks; index += 1) {
+    const chunkBytes = decodeChunk(chunks[index]);
+    allBytes.set(chunkBytes, cursor);
+    cursor += chunkBytes.length;
+  }
+
+  const entries = [];
+  for (let wordIndex = 0; wordIndex < words.length; wordIndex += 1) {
+    const start = wordIndex * dimensions;
+    const vector = new Array(dimensions);
+    for (let i = 0; i < dimensions; i += 1) {
+      vector[i] = allBytes[start + i] / scale;
+    }
+    entries.push([words[wordIndex], vector]);
+  }
+  return entries;
 }
 
 function setBank(entries, usingDemoBank) {
@@ -84,8 +151,7 @@ function cosine(a, b) {
 }
 
 function statusMessage() {
-  if (state.usingDemoBank) return "Demo noun bank loaded. Generate embeddings for the larger game.";
-  return `Loaded ${state.bank.length.toLocaleString()} ranked nouns.`;
+  return "Keep guessing.";
 }
 
 function rankingFor(targetEntry) {
@@ -130,18 +196,18 @@ function submitGuess(event) {
   const word = cleanGuess(nodes.input.value);
 
   if (!word) {
-    nodes.message.textContent = "Try a single word.";
+    nodes.message.textContent = statusMessage();
     return;
   }
 
   if (!state.byWord.has(word)) {
-    nodes.message.textContent = `"${word}" is not in the noun bank.`;
+    nodes.message.textContent = `"${word}" is not in the word bank.`;
     nodes.input.select();
     return;
   }
 
   if (state.guesses.some((guess) => guess.word === word)) {
-    nodes.message.textContent = `"${word}" is already on the board.`;
+    nodes.message.textContent = statusMessage();
     nodes.input.select();
     return;
   }
@@ -150,40 +216,28 @@ function submitGuess(event) {
   state.guesses.unshift({ word, ranks });
   nodes.input.value = "";
 
-  const solved = ranks
-    .map((rank, index) => (rank === 1 ? `Game ${index === 0 ? "A" : "B"}` : null))
-    .filter(Boolean);
-
-  nodes.message.textContent = solved.length
-    ? `${solved.join(" and ")} solved. Keep going until both are found.`
-    : bestNudge(ranks);
+  nodes.message.textContent = statusMessage();
 
   render();
 }
 
-function bestNudge(ranks) {
-  const best = Math.min(...ranks);
-  if (best <= 10) return "Very close. The answer is in the neighborhood.";
-  if (best <= 50) return "Hot trail.";
-  if (best <= 200) return "Useful clue. Follow that meaning.";
-  if (best <= 1000) return "Some signal, but keep roaming.";
-  return "Distant. Try a different semantic area.";
-}
-
 function render() {
-  nodes.history.innerHTML = "";
-  state.guesses.forEach((guess) => {
-    const row = document.createElement("div");
-    row.className = "history-row";
-    row.innerHTML = `
-      <span class="guess-word" title="${guess.word}">${guess.word}</span>
-      <span class="rank ${rankClass(guess.ranks[0])}">#${guess.ranks[0]}</span>
-      <span class="rank ${rankClass(guess.ranks[1])}">#${guess.ranks[1]}</span>
-    `;
-    nodes.history.appendChild(row);
+  [0, 1].forEach((boardIndex) => {
+    nodes.history[boardIndex].innerHTML = "";
+    const rankedGuesses = [...state.guesses].sort((a, b) => a.ranks[boardIndex] - b.ranks[boardIndex]);
+    rankedGuesses.forEach((guess) => {
+      const row = document.createElement("div");
+      row.className = "history-row";
+      row.innerHTML = `
+        <span class="guess-word" title="${guess.word}">${guess.word}</span>
+        <span class="rank ${rankClass(guess.ranks[boardIndex])}">#${guess.ranks[boardIndex]}</span>
+      `;
+      nodes.history[boardIndex].appendChild(row);
+    });
   });
 
   nodes.count.textContent = `${state.guesses.length} ${state.guesses.length === 1 ? "guess" : "guesses"}`;
+  nodes.guessTicker.textContent = `Guesses: ${state.guesses.length}`;
 
   [0, 1].forEach((index) => {
     const best = bestRank(index);
@@ -230,27 +284,37 @@ function closerCount(rank) {
 
 function giveUp(index) {
   state.revealed[index] = true;
-  nodes.message.textContent = `Game ${index === 0 ? "A" : "B"} revealed.`;
+  nodes.message.textContent = statusMessage();
   render();
 }
 
 function hint(index) {
   const best = bestRank(index);
+  const effectiveBest = best === Infinity ? state.bank.length : best;
+  const targetRank = Math.max(2, Math.floor(effectiveBest * 0.3));
   const targetRanking = [...state.rankings[index].entries()].sort((a, b) => a[1] - b[1]);
   const guessed = new Set(state.guesses.map((guess) => guess.word));
-  const hintEntry = targetRanking.find(([word, rank]) => rank < best && rank > 1 && !guessed.has(word));
+  const eligible = targetRanking.filter(([word, rank]) => rank > 1 && rank < effectiveBest && !guessed.has(word));
+  const hintEntry = eligible.reduce((closest, entry) => {
+    if (!closest) return entry;
+    const rank = entry[1];
+    const closestRank = closest[1];
+    const distance = Math.abs(rank - targetRank);
+    const closestDistance = Math.abs(closestRank - targetRank);
+    return distance < closestDistance ? entry : closest;
+  }, null);
 
   if (!hintEntry) {
-    nodes.message.textContent = "No hint left before the answer.";
+    nodes.message.textContent = statusMessage();
     return;
   }
 
-  const [word, rank] = hintEntry;
+  const [word] = hintEntry;
   state.guesses.unshift({
     word,
     ranks: [rankWord(word, 0), rankWord(word, 1)],
   });
-  nodes.message.textContent = `Hint added "${word}" at #${rank} for Game ${index === 0 ? "A" : "B"}.`;
+  nodes.message.textContent = statusMessage();
   render();
 }
 

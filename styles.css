@@ -1,15 +1,16 @@
 :root {
   color-scheme: light;
-  --ink: #20222a;
-  --muted: #667085;
-  --line: #d8dde7;
-  --paper: rgba(255, 255, 255, 0.88);
-  --panel: rgba(255, 255, 255, 0.78);
-  --cool: #286c83;
-  --warm: #c26732;
-  --win: #23845f;
-  --danger: #9d3838;
-  --shadow: 0 18px 46px rgba(31, 38, 51, 0.13);
+  --bg: #f2efea;
+  --card: #f7f4ef;
+  --ink: #352f2f;
+  --muted: #6d6462;
+  --line: #d7d0c8;
+  --accent: #9ccbc5;
+  --accent-strong: #79b2aa;
+  --warm: #b67233;
+  --win: #2c8b66;
+  --cold: #717c8f;
+  --danger: #8f4046;
 }
 
 * {
@@ -21,10 +22,7 @@ body {
   margin: 0;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background:
-    linear-gradient(120deg, rgba(40, 108, 131, 0.12), transparent 36%),
-    linear-gradient(300deg, rgba(194, 103, 50, 0.11), transparent 38%),
-    linear-gradient(120deg, #eef5f2 0%, #f7f4ee 48%, #eef2f7 100%);
+  background: linear-gradient(160deg, #f3f0eb 0%, #eceae6 100%);
 }
 
 button,
@@ -33,24 +31,22 @@ input {
 }
 
 button {
-  border: 1px solid rgba(32, 34, 42, 0.14);
+  border: 1px solid #bcb4ab;
   border-radius: 8px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.82);
+  background: #f7f4ef;
   cursor: pointer;
-  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 button:hover {
-  transform: translateY(-1px);
-  border-color: rgba(40, 108, 131, 0.42);
-  background: #fff;
+  border-color: #978f87;
+  background: #fbf8f3;
 }
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.52;
-  transform: none;
+  opacity: 0.55;
 }
 
 #field {
@@ -63,54 +59,51 @@ button:disabled {
 
 .shell {
   position: relative;
-  width: min(1120px, calc(100% - 32px));
+  width: min(980px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 28px 0 44px;
+  padding: 20px 0 34px;
 }
 
 .topbar,
 .guess-zone,
 .board,
 .history-wrap {
-  border: 1px solid rgba(255, 255, 255, 0.64);
-  background: var(--paper);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 10px;
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  min-height: 112px;
-  padding: 24px;
-  border-radius: 8px;
+  gap: 14px;
+  padding: 18px;
 }
 
 .eyebrow,
 .board-label {
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
 h1,
 h2 {
   margin: 0;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
 h1 {
-  font-size: 4.5rem;
-  line-height: 0.92;
+  font-size: clamp(2.3rem, 7vw, 4rem);
+  line-height: 0.95;
 }
 
 h2 {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   line-height: 1.2;
 }
 
@@ -118,72 +111,77 @@ h2 {
   width: 48px;
   height: 48px;
   flex: 0 0 auto;
-  font-size: 1.55rem;
+  font-size: 1.4rem;
   line-height: 1;
 }
 
 .guess-zone {
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 8px;
+  margin-top: 12px;
+  padding: 12px;
 }
 
 .guess-form {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 10px;
+  gap: 8px;
 }
 
 .guess-form input {
   min-width: 0;
   height: 52px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0 16px;
+  border: 1px solid #91877f;
+  border-radius: 7px;
+  padding: 0 14px;
   color: var(--ink);
-  background: #fff;
+  background: #f6f4f3;
   outline: none;
 }
 
 .guess-form input:focus {
-  border-color: var(--cool);
-  box-shadow: 0 0 0 4px rgba(40, 108, 131, 0.14);
+  border-color: #6e675f;
 }
 
 .guess-form button {
   min-width: 108px;
   height: 52px;
+  border-color: #4f5e67;
   color: #fff;
-  border-color: #1f5e73;
-  background: var(--cool);
+  background: #2a6f86;
+  font-weight: 700;
+}
+
+.guess-ticker {
+  margin: 10px 2px 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 800;
 }
 
 .message {
-  min-height: 22px;
-  margin: 10px 2px 0;
+  min-height: 20px;
+  margin: 5px 2px 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.94rem;
+  font-weight: 600;
 }
 
 .boards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .board {
-  min-height: 210px;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 14px;
 }
 
 .board.solved {
-  border-color: rgba(35, 132, 95, 0.42);
+  border-color: #9ac9b6;
 }
 
 .board.revealed {
-  border-color: rgba(157, 56, 56, 0.32);
+  border-color: #d3a8ad;
 }
 
 .board-head,
@@ -191,27 +189,27 @@ h2 {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .best-rank {
   display: grid;
   min-width: 72px;
-  height: 56px;
+  height: 54px;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 9px;
   color: #fff;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 900;
   background: var(--warm);
 }
 
 .progress-track {
   height: 12px;
-  margin: 26px 0 18px;
+  margin: 18px 0 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e5e8ed;
+  background: #e0dcd5;
 }
 
 .progress-track span {
@@ -220,30 +218,29 @@ h2 {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--warm), var(--win));
-  transition: width 220ms ease;
+  transition: width 200ms ease;
 }
 
 .board-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .board-actions button {
-  height: 42px;
+  height: 40px;
 }
 
 .answer {
-  min-height: 23px;
-  margin: 14px 0 0;
+  min-height: 21px;
+  margin: 12px 0 0;
   color: var(--muted);
   font-weight: 700;
 }
 
 .history-wrap {
-  margin-top: 16px;
-  padding: 20px;
-  border-radius: 8px;
+  margin-top: 12px;
+  padding: 14px;
 }
 
 .counter {
@@ -252,41 +249,59 @@ h2 {
   font-weight: 800;
 }
 
+.history-grids {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
 .history-table {
-  margin-top: 16px;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid #c9c1b8;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: #f5f1ec;
+}
+
+.history-subhead {
+  padding: 9px 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  border-bottom: 1px solid #c9c1b8;
+  background: #f0ece6;
 }
 
 .history-row {
   display: grid;
-  grid-template-columns: minmax(96px, 1fr) 98px 98px;
+  grid-template-columns: minmax(96px, 1fr) 98px;
   align-items: center;
   min-height: 46px;
-  padding: 0 12px;
-  border-top: 1px solid var(--line);
-  gap: 12px;
+  padding: 0 11px;
+  border-top: 1px solid #d9d1c8;
+  gap: 10px;
 }
 
 .history-row:first-child,
-#history .history-row:first-child {
+#historyA .history-row:first-child,
+#historyB .history-row:first-child {
   border-top: 0;
 }
 
 .history-row.header {
-  min-height: 38px;
+  min-height: 37px;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.77rem;
   font-weight: 900;
   text-transform: uppercase;
+  background: #f0ece6;
 }
 
 .guess-word {
   min-width: 0;
   overflow: hidden;
-  font-weight: 850;
+  font-weight: 820;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -304,42 +319,42 @@ h2 {
 }
 
 .rank.cold {
-  background: #6f7785;
+  background: var(--cold);
 }
 
 .rank.warm {
-  background: #bb7a34;
+  background: #be7d38;
 }
 
 .rank.hot {
-  background: #b64d3c;
+  background: #b65241;
 }
 
 .rank.close {
-  background: #23845f;
+  background: var(--win);
 }
 
 .rank.win {
-  background: #176c4d;
+  background: #1f744f;
 }
 
 @media (max-width: 760px) {
   .shell {
-    width: min(100% - 20px, 1120px);
+    width: min(100% - 16px, 980px);
     padding-top: 10px;
   }
 
   .topbar {
-    min-height: 96px;
-    padding: 18px;
+    padding: 14px;
   }
 
   h1 {
-    font-size: 2.35rem;
+    font-size: 2.2rem;
   }
 
   .boards,
-  .guess-form {
+  .guess-form,
+  .history-grids {
     grid-template-columns: 1fr;
   }
 
@@ -348,9 +363,9 @@ h2 {
   }
 
   .history-row {
-    grid-template-columns: minmax(72px, 1fr) 76px 76px;
     gap: 8px;
     padding: 0 8px;
+    grid-template-columns: minmax(72px, 1fr) 76px;
   }
 
   .rank {

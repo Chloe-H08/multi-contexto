@@ -34,6 +34,7 @@
           >
           <button type="submit">Guess</button>
         </form>
+        <p id="guessTicker" class="guess-ticker">Guesses: 0</p>
         <p id="message" class="message" role="status"></p>
       </section>
 
@@ -78,23 +79,35 @@
       <section class="history-wrap" aria-label="Guess history">
         <div class="history-head">
           <div>
-            <p class="eyebrow">Shared guesses</p>
-            <h2>Both ranks update together</h2>
+            <p class="eyebrow">Ranked Guesses</p>
+            <h2>Each game sorted by best rank</h2>
           </div>
           <div id="guessCount" class="counter">0 guesses</div>
         </div>
-        <div class="history-table">
-          <div class="history-row header" role="row">
-            <span>Guess</span>
-            <span>Game A</span>
-            <span>Game B</span>
+
+        <div class="history-grids">
+          <div class="history-table">
+            <div class="history-subhead">Game A</div>
+            <div class="history-row header" role="row">
+              <span>Guess</span>
+              <span>Rank</span>
+            </div>
+            <div id="historyA"></div>
           </div>
-          <div id="history"></div>
+
+          <div class="history-table">
+            <div class="history-subhead">Game B</div>
+            <div class="history-row header" role="row">
+              <span>Guess</span>
+              <span>Rank</span>
+            </div>
+            <div id="historyB"></div>
+          </div>
         </div>
       </section>
     </main>
 
-    <script src="data/embeddings.js"></script>
+    <script src="data/embeddings/manifest.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

@@ -4,13 +4,15 @@ An unlimited, local-first Contexto-style word game where every guess applies to 
 
 Contexto ranks guesses by semantic closeness instead of spelling. This version uses one noun bank: every valid guess is a noun in that bank, every answer comes from that same bank, and every rank is fixed against the full bank.
 
+Current packed bank size: about 4,500 noun entries.
+
 ## Run
 
 Open [index.html](index.html) directly in a browser.
 
 ## How Ranking Works
 
-- `data/embeddings.js` contains the valid noun list and its precomputed embeddings.
+- `data/embeddings/manifest.js` and `data/embeddings/chunk-*.js` contain the valid noun list and packed embeddings.
 - At the start of a round, the browser picks two target words.
 - For each target, the browser ranks every noun by cosine similarity to the target.
 - A guess is accepted only if it exists in the noun bank.
@@ -24,5 +26,5 @@ Open [index.html](index.html) directly in a browser.
 - Unlimited rounds
 - Hints that reveal a closer unguessed word
 - Give-up controls per board
-- Precomputed noun embeddings in `data/embeddings.js`
+- Packed, chunked noun embeddings in `data/embeddings/`
 - Responsive layout with an animated semantic-field canvas
