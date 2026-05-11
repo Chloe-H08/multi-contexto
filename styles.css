@@ -1,16 +1,16 @@
 :root {
   color-scheme: light;
-  --bg: #f2efea;
-  --card: #f7f4ef;
-  --ink: #352f2f;
-  --muted: #6d6462;
-  --line: #d7d0c8;
-  --accent: #9ccbc5;
-  --accent-strong: #79b2aa;
-  --warm: #b67233;
-  --win: #2c8b66;
-  --cold: #717c8f;
-  --danger: #8f4046;
+  --bg: #f7f5fb;
+  --card: #fffdfc;
+  --ink: #2f2a3a;
+  --muted: #6f6780;
+  --line: #ddd4ea;
+  --accent: #d5f0df;
+  --accent-strong: #aee2c2;
+  --warm: #8352b8;
+  --win: #2f9d67;
+  --cold: #7e8fa0;
+  --danger: #c04a71;
 }
 
 * {
@@ -22,7 +22,10 @@ body {
   margin: 0;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: linear-gradient(160deg, #f3f0eb 0%, #eceae6 100%);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(174, 226, 194, 0.32), transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(131, 82, 184, 0.18), transparent 26%),
+    linear-gradient(160deg, #faf8ff 0%, #f2f6ff 100%);
 }
 
 button,
@@ -31,16 +34,16 @@ input {
 }
 
 button {
-  border: 1px solid #bcb4ab;
+  border: 1px solid #cdc6d6;
   border-radius: 8px;
   color: var(--ink);
-  background: #f7f4ef;
+  background: #fcfaf7;
   cursor: pointer;
   transition: background 120ms ease, border-color 120ms ease;
 }
 
 button:hover {
-  border-color: #978f87;
+  border-color: #b2abbb;
   background: #fbf8f3;
 }
 
@@ -129,24 +132,24 @@ h2 {
 .guess-form input {
   min-width: 0;
   height: 52px;
-  border: 1px solid #91877f;
+  border: 1px solid #c3bccd;
   border-radius: 7px;
   padding: 0 14px;
   color: var(--ink);
-  background: #f6f4f3;
+  background: #fffdfb;
   outline: none;
 }
 
 .guess-form input:focus {
-  border-color: #6e675f;
+  border-color: #9f97ac;
 }
 
 .guess-form button {
   min-width: 108px;
   height: 52px;
-  border-color: #4f5e67;
+  border-color: #2f9d67;
   color: #fff;
-  background: #2a6f86;
+  background: linear-gradient(135deg, #32a66d, #278b5a);
   font-weight: 700;
 }
 
@@ -177,11 +180,11 @@ h2 {
 }
 
 .board.solved {
-  border-color: #9ac9b6;
+  border-color: #b9ddcc;
 }
 
 .board.revealed {
-  border-color: #d3a8ad;
+  border-color: #e1bcc7;
 }
 
 .board-head,
@@ -201,7 +204,7 @@ h2 {
   color: #fff;
   font-size: 1.3rem;
   font-weight: 900;
-  background: var(--warm);
+  background: linear-gradient(145deg, #8f5cc8, #7645ad);
 }
 
 .progress-track {
@@ -209,7 +212,7 @@ h2 {
   margin: 18px 0 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e0dcd5;
+  background: #ece7f1;
 }
 
 .progress-track span {
@@ -217,7 +220,7 @@ h2 {
   width: 0%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--warm), var(--win));
+  background: linear-gradient(90deg, #9a62d8, #2ea067);
   transition: width 200ms ease;
 }
 
@@ -258,9 +261,9 @@ h2 {
 
 .history-table {
   overflow: hidden;
-  border: 1px solid #c9c1b8;
+  border: 1px solid #d7d0e0;
   border-radius: 8px;
-  background: #f5f1ec;
+  background: #fbf9fd;
 }
 
 .history-subhead {
@@ -269,8 +272,8 @@ h2 {
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
-  border-bottom: 1px solid #c9c1b8;
-  background: #f0ece6;
+  border-bottom: 1px solid #ddd6e6;
+  background: #f4f1f8;
 }
 
 .history-row {
@@ -279,7 +282,7 @@ h2 {
   align-items: center;
   min-height: 46px;
   padding: 0 11px;
-  border-top: 1px solid #d9d1c8;
+  border-top: 1px solid #e5dfec;
   gap: 10px;
 }
 
@@ -295,7 +298,7 @@ h2 {
   font-size: 0.77rem;
   font-weight: 900;
   text-transform: uppercase;
-  background: #f0ece6;
+  background: #f4f1f8;
 }
 
 .guess-word {
@@ -323,11 +326,11 @@ h2 {
 }
 
 .rank.warm {
-  background: #be7d38;
+  background: #8d5bc6;
 }
 
 .rank.hot {
-  background: #b65241;
+  background: #bf4f77;
 }
 
 .rank.close {

@@ -4,7 +4,7 @@ An unlimited, local-first Contexto-style word game where every guess applies to 
 
 Contexto ranks guesses by semantic closeness instead of spelling. This version uses one noun bank: every valid guess is a noun in that bank, every answer comes from that same bank, and every rank is fixed against the full bank.
 
-Current packed bank size: about 4,500 noun entries.
+Current packed bank size: about 6,000 noun entries.
 
 ## Run
 
