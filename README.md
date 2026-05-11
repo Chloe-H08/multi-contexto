@@ -8,7 +8,7 @@ Current packed bank size: about 6,000 noun entries.
 
 ## Run
 
-Open [index.html](index.html) directly in a browser.
+Play it here: https://multi-contexto.vercel.app
 
 ## How Ranking Works
 
