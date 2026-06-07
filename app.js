@@ -155,9 +155,16 @@ function statusMessage() {
 }
 
 function rankingFor(targetEntry) {
+  const EPSILON = 1e-12;
   return state.bank
     .map((entry) => ({ word: entry.word, score: cosine(entry.vector, targetEntry.vector) }))
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      const scoreDelta = b.score - a.score;
+      if (Math.abs(scoreDelta) > EPSILON) return scoreDelta;
+      if (a.word === targetEntry.word) return -1;
+      if (b.word === targetEntry.word) return 1;
+      return a.word.localeCompare(b.word);
+    })
     .map((entry, index) => [entry.word, index + 1]);
 }
 
@@ -290,11 +297,16 @@ function giveUp(index) {
 
 function hint(index) {
   const best = bestRank(index);
-  const effectiveBest = best === Infinity ? state.bank.length : best;
-  const targetRank = Math.max(2, Math.floor(effectiveBest * 0.3));
   const targetRanking = [...state.rankings[index].entries()].sort((a, b) => a[1] - b[1]);
   const guessed = new Set(state.guesses.map((guess) => guess.word));
-  const eligible = targetRanking.filter(([word, rank]) => rank > 1 && rank < effectiveBest && !guessed.has(word));
+  const eligible = targetRanking.filter(([word, rank]) => {
+    if (guessed.has(word) || rank <= 1) return false;
+    if (best === Infinity) return true;
+    if (best <= 2) return rank > best;
+    return rank < best;
+  });
+  const targetRank =
+    best === Infinity ? Math.max(2, Math.floor(state.bank.length * 0.3)) : best <= 2 ? best + 1 : Math.max(2, Math.floor(best * 0.3));
   const hintEntry = eligible.reduce((closest, entry) => {
     if (!closest) return entry;
     const rank = entry[1];
