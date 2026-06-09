@@ -28,6 +28,7 @@ const DEMO_BANK = [
 const state = {
   bank: [],
   byWord: new Map(),
+  aliases: new Map(),
   targetData: [],
   targets: [],
   rankings: [],
@@ -134,10 +135,20 @@ async function loadPackedEntries() {
 }
 
 function setBank(entries, usingDemoBank) {
-  state.bank = entries
+  const rawEntries = entries
     .map(([word, vector]) => ({ word, vector: normalize(vector) }))
     .sort((a, b) => a.word.localeCompare(b.word));
+  const rawByWord = new Map(rawEntries.map((entry) => [entry.word, entry]));
+  const aliases = new Map();
+
+  rawEntries.forEach((entry) => {
+    const canonical = canonicalWord(entry.word, rawByWord);
+    aliases.set(entry.word, canonical);
+  });
+
+  state.bank = rawEntries;
   state.byWord = new Map(state.bank.map((entry) => [entry.word, entry]));
+  state.aliases = aliases;
   state.usingDemoBank = usingDemoBank;
 }
 
@@ -176,6 +187,30 @@ function cleanGuess(value) {
   return value.toLowerCase().trim().replace(/[^a-z-]/g, "");
 }
 
+function singularCandidates(word) {
+  const candidates = [];
+
+  if (word.endsWith("ies") && word.length > 3) candidates.push(`${word.slice(0, -3)}y`);
+  if (word.endsWith("es") && word.length > 2) {
+    candidates.push(word.slice(0, -2));
+    if (/(ches|shes|sses|xes|zes|oes)$/i.test(word)) candidates.push(word.slice(0, -1));
+  }
+  if (word.endsWith("s") && !word.endsWith("ss") && word.length > 1) candidates.push(word.slice(0, -1));
+
+  return [...new Set(candidates)];
+}
+
+function canonicalWord(word, bank) {
+  for (const candidate of singularCandidates(word)) {
+    if (bank.has(candidate)) return candidate;
+  }
+  return word;
+}
+
+function canonicalGuess(word) {
+  return state.aliases.get(word) || word;
+}
+
 function startRound() {
   const first = randomEntry();
   let second = randomEntry();
@@ -200,7 +235,8 @@ function randomEntry() {
 
 function submitGuess(event) {
   event.preventDefault();
-  const word = cleanGuess(nodes.input.value);
+  const inputWord = cleanGuess(nodes.input.value);
+  const word = canonicalGuess(inputWord);
 
   if (!word) {
     nodes.message.textContent = statusMessage();
@@ -208,7 +244,7 @@ function submitGuess(event) {
   }
 
   if (!state.byWord.has(word)) {
-    nodes.message.textContent = `"${word}" is not in the word bank.`;
+    nodes.message.textContent = `"${inputWord}" is not in the word bank.`;
     nodes.input.select();
     return;
   }
