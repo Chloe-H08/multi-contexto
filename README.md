@@ -26,3 +26,4 @@ Play it here: https://multi-contexto.vercel.app
 - Give-up controls per board
 - Packed, chunked common noun/object embeddings in `data/embeddings/`
 - Responsive layout with an animated semantic-field canvas
+# combo-detector
